@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 // 3 types of useEffect
 //useEffect(callback)
@@ -7,37 +7,48 @@ import { useEffect,useState } from "react";
 //useEffect(callback, [])
 // Chi goi 1 lan sau khi component mounted
 //useEffect(callback, [deps])
+//callback se goi laji moi khi deps thay doi
 //******************* */
 
 //Call luôn được gọi sau khi Component mounted
 
+const tabs = ['posts', 'photos', 'albums'];
+
 const Content = () =>{
-    const [posts, setPosts] = useState([]);
-    const [title, setTitle] = useState('');
+    const [type, setType] = useState('albums');
+    const [data, setData] = useState([]);
 
     useEffect(() =>{
-        document.title = title;
-    });
-
-    useEffect(() =>{
-        fetch('https://jsonplaceholder.typicode.com/posts')
-        .then(res => res.json())
-        .then(posts => {
-            setPosts(posts);
-            console.log(posts)
-        });
-    }, []);
+        fetch('https://jsonplaceholder.typicode.com/'+type)
+            .then(res=>res.json())
+            .then(data => {
+                // console.log(type);
+                setData(data)
+            })
+        console.log(type);
+    },[type])
 
     return (
-        <div key='content'>
-            <input 
-                value={title}
-                onChange={(e)=>{setTitle(e.target.value)}}
-            />
-            <ul>
-                {posts.map(post => <li key={post.id}>{post.title}</li>)}
-            </ul>
-        </div>
+        <div key='Content'>
+            {tabs.map(tab => 
+                (<button 
+                key={tab} 
+                style={type === tab ? {color:'red', background:'#333'}:{}}
+                onClick={()=>setType(tab)}
+                >
+                    {tab}
+                </button>)
+            )} 
+            <h1>List</h1>
+            {
+                <ul>
+                    {data.map(item => (
+                        <li key={item.id}>{item.title}</li>
+                    ))}
+                </ul>
+            }
+
+        </div>    
     )
 }
 
