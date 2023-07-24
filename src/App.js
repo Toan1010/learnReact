@@ -1,35 +1,44 @@
 import { useState } from "react";
 
-const gifts = ['kr','sentai','animu','lol']
-
-
 function App() {
-  const [chon, setChon] = useState([]);
+  const [job,setJob] = useState('');
+  const [jobs, setJobs] = useState(() => {
+  const storageJobs = JSON.parse(localStorage.getItem('jobs'));
+  return storageJobs ?? [];
+  });
+  const [checkJob, setCheckJob] = useState('');
+  
 
-  const handlerCheck = (id) => {
-    setChon(prev=>{
-      const isCheck = chon.includes(id)
-      if(isCheck) { 
-        return chon.filter(item => item !== id)
-      }else{
-        return [...prev, id]
-      }
-    });
-  };
+  const addList = () => {
+    const isIn = jobs.includes(job) 
+    if (!isIn){
+      setJobs(prev => {
+        const newJobs = [...prev, job];
+        const jsonJobs = JSON.stringify(newJobs);
+        localStorage.setItem('jobs', jsonJobs);
+        return newJobs
+      })
+    }else{
+      setCheckJob('has in the list');
+    }
+    setJob('');
+  }
 
   return (
     <div className="App" style={{padding:50,}}>
-      {gifts.map((gift,index)=>{
-        return(
-          <div key={index}>
-           <input 
-            type="checkbox" 
-            checked={chon.includes(index)}
-            onChange={()=>handlerCheck(index)}
-           />
-           <label>{gift}</label>
-          </div>)
-      })}
+      <input 
+      value={job} 
+      onChange={e => setJob(e.target.value)}
+      />
+      <button onClick={addList}>Add to List</button>
+      <p style={{color: 'red'}}>{checkJob}</p>
+      <ul>
+        {jobs.map((job, index) => {
+          return (
+            <li key={index}>{job}</li>
+          )
+          })}
+      </ul>
     </div>
   );
 }
