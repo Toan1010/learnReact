@@ -17,6 +17,8 @@ const tabs = ['posts', 'photos', 'albums'];
 const Content = () =>{
     const [type, setType] = useState('albums');
     const [data, setData] = useState([]);
+    const [toTop, setToTop] = useState(false);
+    const [width, setWidth] = useState(window.innerWidth);
 
     useEffect(() =>{
         fetch('https://jsonplaceholder.typicode.com/'+type)
@@ -25,8 +27,30 @@ const Content = () =>{
                 // console.log(type);
                 setData(data)
             })
-        console.log(type);
     },[type])
+
+    useEffect(() =>{
+        const handlerScroll= () =>{
+            setToTop(window.scrollY >= 200);
+        }
+        
+        const handlerSize= () =>{
+            setWidth(window.innerWidth)
+        }
+
+
+        window.addEventListener('resize', handlerSize);
+        window.addEventListener('scroll',  handlerScroll);
+
+        //Cleanup function : la ham se goi khi doi tuong duoc goi bi unmounted.
+        //No se loai bo het cac ham ko dung toi de bo nho ko bi ro ri
+
+        return()=>{
+            window.removeEventListener('scroll', handlerScroll)
+            window.removeEventListener('resize', handlerSize)
+        }
+
+    },[]);
 
     return (
         <div key='Content'>
@@ -39,7 +63,9 @@ const Content = () =>{
                     {tab}
                 </button>)
             )} 
-            <h1>List</h1>
+            
+            <h1>Present size: {width}</h1>
+            <h1>List title</h1>
             {
                 <ul>
                     {data.map(item => (
@@ -47,7 +73,18 @@ const Content = () =>{
                     ))}
                 </ul>
             }
-
+            {
+                toTop && (
+                    <button
+                        style={{
+                            position: 'fixed',
+                            bottom: 20,
+                            right: 20
+                        }}
+                        onClick={()=>{window.scrollTo(0,0)}}
+                    > to Top </button>
+                )
+            }
         </div>    
     )
 }
