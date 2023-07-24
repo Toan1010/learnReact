@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+
+const gifts = ['kr','sentai','animu','lol']
+
 
 function App() {
+  const [chon, setChon] = useState([]);
+
+  const handlerCheck = (id) => {
+    setChon(prev=>{
+      const isCheck = chon.includes(id)
+      if(isCheck) { 
+        return chon.filter(item => item !== id)
+      }else{
+        return [...prev, id]
+      }
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" style={{padding:50,}}>
+      {gifts.map((gift,index)=>{
+        return(
+          <div key={index}>
+           <input 
+            type="checkbox" 
+            checked={chon.includes(index)}
+            onChange={()=>handlerCheck(index)}
+           />
+           <label>{gift}</label>
+          </div>)
+      })}
     </div>
   );
 }
