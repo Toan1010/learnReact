@@ -1,56 +1,36 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 
-// 3 types of useEffect
-//useEffect(callback)
-// Goọi callback mỗi khi component rerender
-// Goọi callback sau khi component duoc render vao DOM
-//useEffect(callback, [])
-// Chi goi 1 lan sau khi component mounted
-//useEffect(callback, [deps])
-//callback se goi laji moi khi deps thay doi
-//******************* */
+//useEffect
+//1. Cap nhat lai state
+//2. Cap nhat DOM (mounted)
+//3. Render lai UI
+//4. Goi cleanup neu deps thay doi
+//5. Goi useEffect callback
 
-//Call luôn được gọi sau khi Component mounted
-//Cleanup luon duoc goi truoc khi component unmounted
-//Cleanup luon duoc goi truoc khi callback duoc goi (tru lan mounted dau tien)
-
-const lessons =['What is ReactJS ?', 'SPA/MPA', 'Arrow function']
+//useLayoutEffect
+//1. Cap nhat lai state
+//2. Cap nhat DOM (mounted)
+//3. Goi cleanup neu deps thay doi (sync)
+//4. Goi useLayoutEffect callback (sync)
+//5. Reander lai UI
 
 const Content = () =>{
-    const [chon, setChon] = useState(0)
+    const [count, setCount] = useState(0);
 
-    useEffect(() =>{
-        const handleComment = ({detail}) => {
-            console.log(detail);
+    useLayoutEffect(() =>{
+        if(count > 3){
+            setCount(0);
         }
+    },[count]);
 
-        window.addEventListener('lesson '+lessons[chon], handleComment)
-        
-        return () => {
-            window.removeEventListener('lesson '+lessons[chon], handleComment)
-        }
-    },[chon])
+    const submit = () => {
+        setCount(prev => prev+1);
+    }
 
     return (
         <div key='Content'>
-            <ul>
-            {
-                lessons.map((lesson, index) =>{
-                    return (
-                        <li 
-                        key={index}
-                        style={{
-                            color: index === chon ? 'red' : '#333'
-                        }}
-                        onClick={()=>setChon(index)}
-                        >
-                            {lesson}
-                        </li>
-                    )
-                })
-            }
-            </ul>
-            
+            <h1>{count}</h1>
+            <button onClick={submit}>Run</button>
         </div>    
     )
 }
