@@ -14,35 +14,43 @@ import { useEffect, useState } from "react";
 //Cleanup luon duoc goi truoc khi component unmounted
 //Cleanup luon duoc goi truoc khi callback duoc goi (tru lan mounted dau tien)
 
+const lessons =['What is ReactJS ?', 'SPA/MPA', 'Arrow function']
+
 const Content = () =>{
-    const [avatar, setAvatar] = useState();
-    
+    const [chon, setChon] = useState(0)
+
     useEffect(() =>{
-        return(()=>{
-            avatar && URL.revokeObjectURL(avatar.preview)
-            }
-        );
-    },[avatar]);
+        const handleComment = ({detail}) => {
+            console.log(detail);
+        }
 
-
-    
-    const handlePreview = (e) =>{
-        const file = e.target.files[0]
-        file.preview = URL.createObjectURL(file)
-        console.log(file.preview);
-        setAvatar(file);
-    };
+        window.addEventListener('lesson '+lessons[chon], handleComment)
+        
+        return () => {
+            window.removeEventListener('lesson '+lessons[chon], handleComment)
+        }
+    },[chon])
 
     return (
         <div key='Content'>
-            <input
-                type="file"
-                onChange={handlePreview}
-            />
+            <ul>
             {
-                avatar && 
-                (<img src={avatar.preview} alt="none" width='80%' />)
+                lessons.map((lesson, index) =>{
+                    return (
+                        <li 
+                        key={index}
+                        style={{
+                            color: index === chon ? 'red' : '#333'
+                        }}
+                        onClick={()=>setChon(index)}
+                        >
+                            {lesson}
+                        </li>
+                    )
+                })
             }
+            </ul>
+            
         </div>    
     )
 }
