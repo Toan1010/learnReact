@@ -1,48 +1,45 @@
-import { useState, useMemo } from "react";
+import { useReducer } from "react";
 
-//useMemo giup tranh thuc hien lai 1 logic nao do ko can thieet
+//useState
+//1. init State = 0
+//2. Actions : up(state+1) down(state-1)
+
+//useReducer
+//1. init state = 0
+//2. Actions : up(state+1) down(state-1)
+//3. Reducer 
+//4. Dispatch
+
+let initialState = 0;
+
+const UP_ACTION = 'up';
+const DOWN_ACTION = 'down';
+const TO_RESTART_ACTION = 'restart';
+
+const reducer = (init, action) => {
+  switch(action){
+    case UP_ACTION:
+      return init+1;
+    case DOWN_ACTION:
+      return init-1;
+    case TO_RESTART_ACTION:
+      return 0;
+    default:
+      throw new Error('Invalid action: ');
+  }
+}
+
 
 function App() {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState();
-  const [products, setProducts] = useState([]); 
-
-  const submit = () => {
-    setProducts( [...products,{
-      name: name,
-      price: +price
-    }])
-  }
-
-  const total = useMemo(()=>{
-    let result = products.reduce((re,product) => {
-      return re+product.price;
-    },0);
-    return result;
-  },[products])
+  const [count, dispatch] = useReducer(reducer, initialState);
+  
 
   return (
     <div className="App" style={{padding:50,}}>
-      <input
-        placeholder="Enter name: "
-        value={name || ''}
-        onChange={(e)=>{setName(e.target.value)}}
-      />
-      <br/>
-      <input
-        placeholder="Enter price: "
-        value={price || ''}
-        onChange={(e)=>{setPrice(e.target.value)}}
-      />
-      <br></br>
-      <button onClick={submit}>Submit</button>
-      <h1>Total: {total}</h1>
-
-      <ul>
-        {products.map((product, index)=> {
-          return <li key={index}>{product.name} - {product.price}</li>;
-        })}
-      </ul>
+      <h1>{count}</h1>
+      <button onClick={()=>dispatch(UP_ACTION)}>up</button>
+      <button onClick={()=>dispatch(TO_RESTART_ACTION)}>restart</button>
+      <button onClick={()=>dispatch(DOWN_ACTION)}>down</button>
     </div>
   );
 }
