@@ -1,34 +1,48 @@
-import Content from "./Content";
-import { useState, useCallback } from "react";
+import { useState, useMemo } from "react";
 
-//useCallback được dùng để tạo ra hàm dùng cho các Component con giúp cho các Component con nếu 
-//ko có sự thay đổi về CẤU TRÚC thì sẽ ko cần re render
+//useMemo giup tranh thuc hien lai 1 logic nao do ko can thieet
 
 function App() {
-  const [show, setShow] = useState(false);
-  const [count, setCount]= useState(1);
-  const [count2, setCount2]= useState(1);
-  
-  const handleStart = () =>{
-    setCount(prev => prev+1)
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState();
+  const [products, setProducts] = useState([]); 
+
+  const submit = () => {
+    setProducts( [...products,{
+      name: name,
+      price: +price
+    }])
   }
 
-  const handleStart2 = useCallback(()=>{
-    setCount2(prev => prev+1)
-  },[])
+  const total = useMemo(()=>{
+    let result = products.reduce((re,product) => {
+      return re+product.price;
+    },0);
+    return result;
+  },[products])
 
   return (
     <div className="App" style={{padding:50,}}>
-      <button onClick={()=>setShow(!show)}>Toggle Content</button>
-      <h1>Count : {count}</h1>
-      <h1>Count2 : {count2}</h1>
-      <button 
-      onClick={handleStart}>
-        click to increase
-      </button>
-      {show && <Content 
-        handle={handleStart2}
-      />}
+      <input
+        placeholder="Enter name: "
+        value={name || ''}
+        onChange={(e)=>{setName(e.target.value)}}
+      />
+      <br/>
+      <input
+        placeholder="Enter price: "
+        value={price || ''}
+        onChange={(e)=>{setPrice(e.target.value)}}
+      />
+      <br></br>
+      <button onClick={submit}>Submit</button>
+      <h1>Total: {total}</h1>
+
+      <ul>
+        {products.map((product, index)=> {
+          return <li key={index}>{product.name} - {product.price}</li>;
+        })}
+      </ul>
     </div>
   );
 }
